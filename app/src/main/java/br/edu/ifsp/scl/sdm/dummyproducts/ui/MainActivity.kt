@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.ifsp.scl.sdm.dummyproducts.R
@@ -55,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                     photoImageList.clear()
                     photoImageAdapter.notifyItemRangeRemoved(0, size)
 
-                    retrievePhotoImage(photosList[position].thumbnailUrl)
+                    retrievePhotoImage(arrayOf(photosList[position].url, photosList[position].thumbnailUrl))
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -73,8 +72,8 @@ class MainActivity : AppCompatActivity() {
         retrievePhotos()
     }
 
-    private fun retrievePhotoImage(thumbnailUrl: String) {
-        PhotoJSONAPI.PhotoRequest(thumbnailUrl, {
+    private fun retrievePhotoImage(urls: Array<String>) = urls.forEach {imgUrl ->
+        PhotoJSONAPI.PhotoRequest(imgUrl, {
             response ->
             photoImageList.add(response)
             photoImageAdapter.notifyItemInserted(photoImageList.lastIndex)
@@ -83,6 +82,16 @@ class MainActivity : AppCompatActivity() {
         }).also {
             PhotoJSONAPI.getInstance(this).addToRequestQueue(it)
         }
+
+        // Professor, deixei comentado pra vc ver que tbm fiz com o método ImageRequest
+//        ImageRequest(imgUrl,
+//            {response ->
+//                photoImageList.add(response)
+//                photoImageAdapter.notifyItemInserted(photoImageList.lastIndex)
+//            }, 0,0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, {
+//                Toast.makeText(this, getString(R.string.request_problem), Toast.LENGTH_SHORT).show()
+//            }).also { PhotoJSONAPI.getInstance(this).addToRequestQueue(it) }
+
     }
 
     private fun retrievePhotos() {
